@@ -1,100 +1,71 @@
 <?php
-include 'header.php';
-require 'data.php';
-require '../database/dbconnection.php';
-require '../includes/login.check.admin.php';
-require '../includes/login.admin.php';
+require_once 'database/dbconnection.php'; 
+include_once 'navbar.php';
+require 'includes/login.check.user.php';
+require 'includes/login.user.php';
 
-$all_members = allMembers($conn);
-$no_of_all_members = $all_members->num_rows;
-
-$all_admins = allAdmins($conn);
-$no_of_all_admins = $all_admins->num_rows;
-
-$all_users = allUsers($conn);
-$no_of_all_users = $all_users->num_rows;
-
-$all_inactive_admins = allInactiveAdmins($conn);
-$no_of_inactive_admins = $all_inactive_admins->num_rows;
-
-$all_inactive_users = allInactiveUsers($conn);
-$no_of_inactive_users = $all_inactive_users->num_rows;
-
-$all_posts = allPosts($conn);
-$no_of_posts = $all_posts->num_rows;
-
-?>
-
-
-
-
-<h1>Admin Dashboard</h1>
-
-<?php
-
-
-
-
-if(isset($_GET['promote'])){
-    echo "<p>User promoted successfully</p>";
+$sql = 'select * from post';
+$stmt=$conn->prepare($sql);
+if(!$stmt){
+    header('location:index.php?error=queryerror');
+    exit();
 }
+$stmt->execute();
+$result= $stmt->get_result();
+$stmt->close();
 ?>
-<div class="cards">
-    <div class="card">
-        <div class="card-text">
-            <h2>All Members</h2>
-            <p class="card-no"><?php echo $no_of_all_members ?></p>
+<main>
+<div id="showcase">
+            <div class="container">
+                <div class="showcase-content">
+                    <h1><span class="text-primary">Norse Mystic </span> School of Arts</h1>
+                    <p class="lead">"You can look at a picture for a week and never think of it again. You can also look at the picture for a second and think of it all your life."</p>
+                    <a class="btn" href="about.php">About Our School</a>
+                </div>
+            </div>
         </div>
-        <div class="card-button">
-            <a href="members.all.php"> View More...</a>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-text">
-            <h2>All Admins</h2>
-            <p class="card-no"><?php echo $no_of_all_admins ?></p>
-        </div>
-        <div class="card-button">
-            <a href="members.admins.php"> View More...</a>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-text">
-            <h2>All Users</h2>
-            <p class="card-no"><?php echo $no_of_all_users ?></p>
-        </div>
-        <div class="card-button">
-            <a href="members.users.php"> View More...</a>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-text">
-            <h2>All Inactive Admins</h2>
-            <p class="card-no"><?php echo $no_of_inactive_admins ?></p>
-        </div>
-        <div class="card-button">
-            <a href="members.admins.inactive.php"> View More...</a>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-text">
-            <h2>All Inactive Users</h2>
-            <p class="card-no"><?php echo $no_of_inactive_users ?></p>
-        </div>
-        <div class="card-button">
-            <a href="members.users.inactive.php"> View More...</a>
+<section>
+    <div class="main-content">
+        <h1 style="text-align: center;">Posts</h1>
+        <div class="post-parent">
+            <?php while($row=$result->fetch_assoc()){
+                ?>
+                <div class="post">
+                    <div class="post-title">
+                        <h3><?php echo $row['headline'] ?></h3>
+                    </div>
+                    <div class="post-content">
+                        <p><?php echo $row['description'] ?></p>
+                    </div>
+                    <div class="post-image">
+                        <img src="assets/uploads/<?php echo $row['post_image'] ?>" />
+                    </div>
+                    <div class="icons">
+                        <i class="fas fa-heart fa-2x"></i>
+                        <i class="fas fa-comment fa-2x"></i>
+                        <i class="fas fa-share fa-2x"></i>
+                    </div>
+                </div>
+                <?php
+            } ?>
         </div>
     </div>
-    <div class="card">
-        <div class="card-text">
-            <h2>All Posts</h2>
-            <p class="card-no"><?php echo $no_of_posts ?></p>
-        </div>
-        <div class="card-button">
-            <a href="post.view.php"> View More...</a>
-        </div>
+</section>
+</main>
+<section id="features">
+    <div class="box bg-light">
+      <i class="fas fa-school fa-3x"></i>
+      <h3>Peaceful Environment</h3>
     </div>
-</div>
-
-</body>
-</html>
+    <div class="box bg-primary">
+        <i class="fas fa-lightbulb fa-3x" aria-hidden="true"></i>
+        <h3>Learn Differently</h3>
+    </div>
+    <div class="box bg-light">
+        <i class="fas fa-users fa-3x"></i>
+        <h3>Wider Choice</h3>
+    </div>
+  </section>
+<?php
+include_once('footer.php');
+?>
